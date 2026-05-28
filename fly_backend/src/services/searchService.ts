@@ -1,5 +1,5 @@
-import { searchClient } from '../config/meilisearch';
-import { SearchResult } from '../models/types';
+import { searchClient } from '../config/meilisearch.js';
+import { SearchResult } from '../models/types.js';
 
 export class SearchService {
   async search(query: string, limit: number = 10): Promise<SearchResult[]> {
