@@ -1,0 +1,47 @@
+services:
+  # 1. Meilisearch (Database)
+  - type: web
+    name: fly-meilisearch
+    env: docker
+    dockerfile: ./meili.Dockerfile # We'll create this simple fallback
+    envVars:
+      - key: MEILI_MASTER_KEY
+        generateValue: true
+      - key: MEILI_NO_ANALYTICS
+        value: "true"
+      - key: MEILI_ENV
+        value: "production"
+
+  # 2. Backend (Express API)
+  - type: web
+    name: fly-backend
+    env: node
+    rootDir: fly_backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: MEILI_HOST
+        fromService:
+          name: fly-meilisearch
+          type: web
+          property: host
+      - key: MEILI_MASTER_KEY
+        fromService:
+          name: fly-meilisearch
+          type: web
+          property: envVar
+          envVar: MEILI_MASTER_KEY
+
+  # 3. Frontend (React/Vite)
+  - type: web
+    name: fly-frontend
+    env: static
+    rootDir: fly_frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: fly-backend
+          type: web
+          property: host
