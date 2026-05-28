@@ -3,7 +3,7 @@ services:
   - type: pserv
     name: fly-meilisearch
     env: docker
-    dockerfile: ./meili.Dockerfile
+    dockerfilePath: ./meili.Dockerfile
     envVars:
       - key: MEILI_MASTER_KEY
         generateValue: true
