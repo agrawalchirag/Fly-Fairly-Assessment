@@ -1,9 +1,9 @@
 services:
-  # 1. Meilisearch (Database)
-  - type: web
+  # 1. Meilisearch (Database - Private Service)
+  - type: pserv
     name: fly-meilisearch
     env: docker
-    dockerfile: ./meili.Dockerfile # We'll create this simple fallback
+    dockerfile: ./meili.Dockerfile
     envVars:
       - key: MEILI_MASTER_KEY
         generateValue: true
@@ -21,14 +21,11 @@ services:
     startCommand: npm start
     envVars:
       - key: MEILI_HOST
-        fromService:
-          name: fly-meilisearch
-          type: web
-          property: host
+        value: http://fly-meilisearch:7700
       - key: MEILI_MASTER_KEY
         fromService:
           name: fly-meilisearch
-          type: web
+          type: pserv
           property: envVar
           envVar: MEILI_MASTER_KEY
 
@@ -38,10 +35,11 @@ services:
     env: static
     rootDir: fly_frontend
     buildCommand: npm install && npm run build
-    publishDir: dist
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         fromService:
           name: fly-backend
           type: web
           property: host
+

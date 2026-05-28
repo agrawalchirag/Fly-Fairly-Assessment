@@ -28,7 +28,13 @@ function App() {
     }
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/search?q=${encodeURIComponent(q)}`);
+      const baseUrl = import.meta.env.VITE_API_URL 
+        ? (import.meta.env.VITE_API_URL.startsWith('http') 
+            ? import.meta.env.VITE_API_URL 
+            : `https://${import.meta.env.VITE_API_URL}`)
+        : 'http://localhost:3001';
+
+      const response = await fetch(`${baseUrl}/api/search?q=${encodeURIComponent(q)}`);
       const data = await response.json();
       setResults(data.results);
       setShowDropdown(true);
