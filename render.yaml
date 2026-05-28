@@ -1,8 +1,9 @@
 services:
-  # 1. Meilisearch (Database - Private Service)
-  - type: pserv
+  # 1. Meilisearch (Database)
+  - type: web
     name: fly-meilisearch
     runtime: docker
+    plan: free
     dockerfilePath: ./meili.Dockerfile
     envVars:
       - key: MEILI_MASTER_KEY
@@ -16,16 +17,20 @@ services:
   - type: web
     name: fly-backend
     runtime: node
+    plan: free
     rootDir: fly_backend
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: MEILI_HOST
-        value: http://fly-meilisearch:7700
+        fromService:
+          name: fly-meilisearch
+          type: web
+          property: host
       - key: MEILI_MASTER_KEY
         fromService:
           name: fly-meilisearch
-          type: pserv
+          type: web
           envVarKey: MEILI_MASTER_KEY
 
   # 3. Frontend (React/Vite)
