@@ -1,0 +1,19 @@
+{
+  "LON": ["LHR", "LGW", "STN", "LCY", "LTN", "SEN"],
+  "NYC": ["JFK", "LGA", "EWR"],
+  "PAR": ["CDG", "ORY", "BVA"],
+  "TYO": ["NRT", "HND"],
+  "SEL": ["ICN", "GMP"],
+  "OSA": ["KIX", "ITM"],
+  "BJS": ["PEK", "PKX"],
+  "SHA": ["PVG", "SHA"],
+  "CHI": ["ORD", "MDW"],
+  "WAS": ["IAD", "DCA", "BWI"],
+  "MIL": ["MXP", "LIN", "BGY"],
+  "STO": ["ARN", "BMA", "NYO"],
+  "MOW": ["SVO", "DME", "VKO", "ZIA"],
+  "BER": ["BER"],
+  "TCI": ["TFS", "TFN"],
+  "RIO": ["GIG", "SDU"],
+  "SAO": ["GRU", "CGH", "VCP"]
+}
