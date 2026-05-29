@@ -211,7 +211,7 @@ export async function seed() {
     console.log('Seed complete!');
   } catch (error) {
     console.error('SEED ERROR:', error);
-    process.exit(1);
+    throw error;
   }
 }
 

@@ -25,13 +25,29 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', engine: 'meilisearch' });
 });
 
+let isSeeding = false;
+
 app.get('/api/seed', async (req, res) => {
-  try {
-    await seed();
-    res.json({ status: 'success', message: 'Seeding completed' });
-  } catch (error: any) {
-    res.status(500).json({ status: 'error', message: error.message });
+  if (isSeeding) {
+    return res.status(429).json({ status: 'error', message: 'Seeding already in progress' });
   }
+
+  isSeeding = true;
+  // Start seeding in background
+  seed()
+    .then(() => {
+      console.log('Background seeding completed successfully');
+      isSeeding = false;
+    })
+    .catch((err) => {
+      console.error('Background seeding failed:', err);
+      isSeeding = false;
+    });
+
+  res.status(202).json({ 
+    status: 'accepted', 
+    message: 'Seeding started in background. Please check /health or try searching in a minute.' 
+  });
 });
 
 app.get('/', (req, res) => {
