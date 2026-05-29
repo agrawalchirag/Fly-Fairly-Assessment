@@ -40,13 +40,11 @@ app.get('/api/debug', async (req, res) => {
     });
 
     const stats = await searchClient.getStats();
-    const tasks = await (searchClient as any).getTasks({ limit: 5 });
     const host = process.env.MEILI_HOST || 'not set';
     
     res.json({ 
       status: 'ready', 
       stats, 
-      tasks,
       host_configured: host.replace(/:.+@/, ':***@'),
       data_files_present: fileStatus,
       isSeeding 

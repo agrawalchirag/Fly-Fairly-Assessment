@@ -17,12 +17,6 @@ const rootDir = process.cwd();
 const DATA_DIR = path.join(rootDir, 'data/raw');
 const ENRICH_DIR = path.join(rootDir, 'data');
 
-// Load enrichment data
-const multiAirportCities = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'multi_airport_cities.json'), 'utf-8'));
-const tourismAliases = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'tourism_aliases.json'), 'utf-8'));
-const cityOverrides = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'city_overrides.json'), 'utf-8'));
-const translations = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'translations.json'), 'utf-8'));
-
 function normalize(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
@@ -30,6 +24,12 @@ function normalize(text: string): string {
 export async function seed() {
   try {
     console.log('Starting seed process...');
+
+    // Load enrichment data inside the function to avoid top-level path issues
+    const multiAirportCities = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'multi_airport_cities.json'), 'utf-8'));
+    const tourismAliases = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'tourism_aliases.json'), 'utf-8'));
+    const cityOverrides = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'city_overrides.json'), 'utf-8'));
+    const translations = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'translations.json'), 'utf-8'));
 
     // Check if data files exist
     const filesToCheck = ['airports.csv', 'regions.csv', 'countries.csv'];
