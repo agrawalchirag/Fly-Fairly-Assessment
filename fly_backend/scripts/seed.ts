@@ -8,10 +8,7 @@ import { Airport, AirportDocument, CityDocument, RegionDocument } from '../src/m
 
 dotenv.config();
 
-const client = new Meilisearch({
-  host: process.env.MEILI_HOST || 'http://localhost:7700',
-  apiKey: process.env.MEILI_MASTER_KEY || 'masterKey',
-});
+import { searchClient as client } from '../src/config/meilisearch.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
