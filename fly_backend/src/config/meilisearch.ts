@@ -3,10 +3,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// MEILI_HOST must be a full URL like http://fly-meilisearch:7700
-const meiliHost = process.env.MEILI_HOST || 'http://localhost:7700';
+let meiliHost = process.env.MEILI_HOST || 'http://localhost:7700';
 
-console.log(`Meilisearch connecting to: ${meiliHost}`);
+// Render specific fix: If host is just a hostname, add http and port.
+// If it's already a full URL (https://...), use it as is.
+if (!meiliHost.startsWith('http')) {
+    meiliHost = `http://${meiliHost}:7700`;
+}
+
+console.log(`Connecting to Meilisearch at: ${meiliHost}`);
 
 export const searchClient = new Meilisearch({
   host: meiliHost,

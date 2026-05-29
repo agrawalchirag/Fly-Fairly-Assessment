@@ -1,6 +1,6 @@
 services:
-  # 1. Meilisearch (Private Service - internal only, enables DNS resolution)
-  - type: pserv
+  # 1. Meilisearch (Web Service)
+  - type: web
     name: fly-meilisearch
     runtime: docker
     plan: free
@@ -12,6 +12,8 @@ services:
         value: "true"
       - key: MEILI_ENV
         value: "production"
+      - key: PORT # This tells Render which port to map externally
+        value: "7700"
 
   # 2. Backend (Express API)
   - type: web
@@ -23,11 +25,14 @@ services:
     startCommand: npm start
     envVars:
       - key: MEILI_HOST
-        value: http://fly-meilisearch:7700
+        fromService:
+          name: fly-meilisearch
+          type: web
+          property: host
       - key: MEILI_MASTER_KEY
         fromService:
           name: fly-meilisearch
-          type: pserv
+          type: web
           envVarKey: MEILI_MASTER_KEY
 
   # 3. Frontend (React/Vite)
