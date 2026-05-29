@@ -25,6 +25,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', engine: 'meilisearch' });
 });
 
+let isSeeding = false;
+let lastSeedError: string | null = null;
+
 app.get('/api/debug', async (req, res) => {
   try {
     const fs = await import('fs');
@@ -40,28 +43,25 @@ app.get('/api/debug', async (req, res) => {
     });
 
     const stats = await searchClient.getStats();
-    const host = process.env.MEILI_HOST || 'not set';
     
     res.json({ 
       status: 'ready', 
       stats, 
-      host_configured: host.replace(/:.+@/, ':***@'),
+      host_configured: meiliHost,
       data_files_present: fileStatus,
-      isSeeding 
+      isSeeding,
+      lastSeedError
     });
   } catch (error: any) {
     console.error('DEBUG API ERROR:', error.message);
     res.status(500).json({ 
       status: 'error', 
       message: error.message,
-      suggestion: 'Check if MEILI_HOST matches Render Dashboard exactly',
-      current_target: meiliHost,
-      host_env: process.env.MEILI_HOST || 'not set'
+      lastSeedError,
+      current_target: meiliHost
     });
   }
 });
-
-let isSeeding = false;
 
 app.get('/api/seed', async (req, res) => {
   if (isSeeding) {
@@ -69,6 +69,7 @@ app.get('/api/seed', async (req, res) => {
   }
 
   isSeeding = true;
+  lastSeedError = null;
   // Start seeding in background
   seed()
     .then(() => {
@@ -77,6 +78,7 @@ app.get('/api/seed', async (req, res) => {
     })
     .catch((err) => {
       console.error('Background seeding failed:', err);
+      lastSeedError = err.message || JSON.stringify(err);
       isSeeding = false;
     });
 
