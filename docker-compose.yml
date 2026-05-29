@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.12
+    container_name: fly-meilisearch
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_MASTER_KEY=masterKey123
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_ENV=production
+      - MEILI_HTTP_ADDR=0.0.0.0:7700
+    volumes:
+      - meili_data:/meili_data
+    restart: always
+
+  backend:
+    build: 
+      context: ./fly_backend
+      dockerfile: Dockerfile
+    container_name: fly-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - MEILI_HOST=http://meilisearch:7700
+      - MEILI_MASTER_KEY=masterKey123
+      - PORT=3001
+    depends_on:
+      - meilisearch
+    restart: always
+
+volumes:
+  meili_data:
