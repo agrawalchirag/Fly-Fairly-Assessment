@@ -199,7 +199,7 @@ export async function seed() {
 
     console.log('Sending documents to Meilisearch in batches...');
 
-    const BATCH_SIZE = 500;
+    const BATCH_SIZE = 100;
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
     const sendInBatches = async (index: any, documents: any[]) => {
@@ -207,10 +207,10 @@ export async function seed() {
         const batch = documents.slice(i, i + BATCH_SIZE);
         console.log(`Sending batch to ${index.uid}: ${i} to ${i + batch.length}...`);
         await index.addDocuments(batch);
-        // Wait 3 seconds for Meilisearch to "breathe" and process the index
+        // Long wait for memory to recover
         if (i + BATCH_SIZE < documents.length) {
-          console.log('Waiting 3 seconds for memory to clear...');
-          await sleep(3000);
+          console.log('Waiting 5 seconds for memory stabilization...');
+          await sleep(5000);
         }
       }
     };

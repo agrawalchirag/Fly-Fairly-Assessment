@@ -12,8 +12,12 @@ services:
         value: "true"
       - key: MEILI_ENV
         value: "production"
-      - key: PORT # This tells Render which port to map externally
+      - key: PORT 
         value: "7700"
+      - key: MEILI_MAX_INDEXING_THREADS # CRITICAL for 512MB RAM
+        value: "1"
+      - key: MEILI_HTTP_PAYLOAD_SIZE_LIMIT
+        value: "10485760" # 10MB limit to prevent spikes
 
   # 2. Backend (Express API)
   - type: web
