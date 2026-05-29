@@ -25,6 +25,40 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', engine: 'meilisearch' });
 });
 
+app.get('/api/debug', async (req, res) => {
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    const rootDir = process.cwd();
+    const dataPath = path.join(rootDir, 'data/raw');
+    
+    // Check files
+    const files = ['airports.csv', 'regions.csv', 'countries.csv'];
+    const fileStatus: Record<string, boolean> = {};
+    files.forEach(f => {
+      fileStatus[f] = fs.existsSync(path.join(dataPath, f));
+    });
+
+    const stats = await searchClient.getStats();
+    const host = process.env.MEILI_HOST || 'not set';
+    
+    res.json({ 
+      status: 'ready', 
+      stats, 
+      host_configured: host.replace(/:.+@/, ':***@'),
+      data_files_present: fileStatus,
+      isSeeding 
+    });
+  } catch (error: any) {
+    res.status(500).json({ 
+      status: 'error', 
+      message: error.message,
+      code: error.code,
+      host: process.env.MEILI_HOST || 'not set'
+    });
+  }
+});
+
 let isSeeding = false;
 
 app.get('/api/seed', async (req, res) => {
