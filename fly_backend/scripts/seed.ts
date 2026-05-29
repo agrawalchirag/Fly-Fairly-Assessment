@@ -16,8 +16,9 @@ const client = new Meilisearch({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DATA_DIR = path.join(__dirname, '../data/raw');
-const ENRICH_DIR = path.join(__dirname, '../data');
+const rootDir = process.cwd();
+const DATA_DIR = path.join(rootDir, 'data/raw');
+const ENRICH_DIR = path.join(rootDir, 'data');
 
 // Load enrichment data
 const multiAirportCities = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, 'multi_airport_cities.json'), 'utf-8'));
