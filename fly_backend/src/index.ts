@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import searchRouter from './routes/search';
+import searchRouter from './routes/search.js';
+import { searchClient } from './config/meilisearch.js';
+import { seed } from '../scripts/seed.js';
 
 dotenv.config();
 
@@ -23,6 +25,21 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', engine: 'meilisearch' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Fly Fairly Backend listening on port ${PORT}`);
+  
+  // Auto-seed check for Render's ephemeral storage
+  try {
+    const stats = await searchClient.getStats();
+    const airportCount = stats.indexes.airports?.numberOfDocuments || 0;
+    
+    if (airportCount === 0) {
+      console.log('Meilisearch index empty. Starting auto-seed...');
+      await seed();
+    } else {
+      console.log(`Meilisearch ready with ${airportCount} airports.`);
+    }
+  } catch (error) {
+    console.log('Meilisearch not yet reachable or setup. Skipping auto-seed check.');
+  }
 });

@@ -1,9 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { parse } from 'csv-parse/sync';
 import { Meilisearch } from 'meilisearch';
 import dotenv from 'dotenv';
-import { Airport, AirportDocument, CityDocument, RegionDocument } from '../src/models/types';
+import { Airport, AirportDocument, CityDocument, RegionDocument } from '../src/models/types.js';
 
 dotenv.config();
 
@@ -11,6 +12,9 @@ const client = new Meilisearch({
   host: process.env.MEILI_HOST || 'http://localhost:7700',
   apiKey: process.env.MEILI_MASTER_KEY || 'masterKey',
 });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const DATA_DIR = path.join(__dirname, '../data/raw');
 const ENRICH_DIR = path.join(__dirname, '../data');
@@ -25,7 +29,7 @@ function normalize(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
-async function seed() {
+export async function seed() {
   try {
     console.log('Starting seed process...');
 
@@ -210,4 +214,6 @@ async function seed() {
   }
 }
 
-seed();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  seed();
+}
