@@ -25,6 +25,19 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', engine: 'meilisearch' });
 });
 
+app.get('/api/seed', async (req, res) => {
+  try {
+    await seed();
+    res.json({ status: 'success', message: 'Seeding completed' });
+  } catch (error: any) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
+app.get('/', (req, res) => {
+  res.send('<h1>Fly Fairly Backend is Running</h1><p>Check <a href="/health">/health</a> or use <code>/api/search?q=query</code></p>');
+});
+
 app.listen(PORT, async () => {
   console.log(`Fly Fairly Backend listening on port ${PORT}`);
   

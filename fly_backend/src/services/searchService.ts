@@ -8,13 +8,25 @@ export class SearchService {
     const isIataCode = /^[A-Z]{3}$/.test(query.toUpperCase());
 
     // Multi-search across airports, cities, and regions
-    const { results } = await searchClient.multiSearch({
-      queries: [
-        { indexUid: 'airports', q: query, limit: 50 },
-        { indexUid: 'cities', q: query, limit: 10 },
-        { indexUid: 'regions', q: query, limit: 10 },
-      ]
-    });
+    let multiSearchResult;
+    try {
+      multiSearchResult = await searchClient.multiSearch({
+        queries: [
+          { indexUid: 'airports', q: query, limit: 50 },
+          { indexUid: 'cities', q: query, limit: 10 },
+          { indexUid: 'regions', q: query, limit: 10 },
+        ]
+      });
+    } catch (error: any) {
+      console.error('Meilisearch MultiSearch Error:', error.message || error);
+      // If indexes don't exist, it might be a seeding issue
+      if (error.message?.includes('not found')) {
+        return [];
+      }
+      throw error;
+    }
+
+    const { results } = multiSearchResult;
 
     let merged: SearchResult[] = [];
     
