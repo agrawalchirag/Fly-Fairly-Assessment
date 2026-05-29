@@ -28,66 +28,6 @@ app.get('/health', (req, res) => {
 let isSeeding = false;
 let lastSeedError: string | null = null;
 
-app.get('/api/debug', async (req, res) => {
-  try {
-    const fs = await import('fs');
-    const path = await import('path');
-    const rootDir = process.cwd();
-    const dataPath = path.join(rootDir, 'data/raw');
-    
-    // Check files
-    const files = ['airports.csv', 'regions.csv', 'countries.csv'];
-    const fileStatus: Record<string, boolean> = {};
-    files.forEach(f => {
-      fileStatus[f] = fs.existsSync(path.join(dataPath, f));
-    });
-
-    const stats = await searchClient.getStats();
-    
-    res.json({ 
-      status: 'ready', 
-      stats, 
-      host_configured: meiliHost,
-      data_files_present: fileStatus,
-      isSeeding,
-      lastSeedError
-    });
-  } catch (error: any) {
-    console.error('DEBUG API ERROR:', error.message);
-    res.status(500).json({ 
-      status: 'error', 
-      message: error.message,
-      lastSeedError,
-      current_target: meiliHost
-    });
-  }
-});
-
-app.get('/api/seed', async (req, res) => {
-  if (isSeeding) {
-    return res.status(429).json({ status: 'error', message: 'Seeding already in progress' });
-  }
-
-  isSeeding = true;
-  lastSeedError = null;
-  // Start seeding in background
-  seed()
-    .then(() => {
-      console.log('Background seeding completed successfully');
-      isSeeding = false;
-    })
-    .catch((err) => {
-      console.error('Background seeding failed:', err);
-      lastSeedError = err.message || JSON.stringify(err);
-      isSeeding = false;
-    });
-
-  res.status(202).json({ 
-    status: 'accepted', 
-    message: 'Seeding started in background. Please check /health or try searching in a minute.' 
-  });
-});
-
 app.get('/', (req, res) => {
   res.send('<h1>Fly Fairly Backend is Running</h1><p>Check <a href="/health">/health</a> or use <code>/api/search?q=query</code></p>');
 });
