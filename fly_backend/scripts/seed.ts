@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parse } from 'csv-parse/sync';
-import { Meilisearch } from 'meilisearch';
 import dotenv from 'dotenv';
 import { Airport, AirportDocument, CityDocument, RegionDocument } from '../src/models/types.js';
 

@@ -1,6 +1,6 @@
 services:
-  # 1. Meilisearch (Database)
-  - type: web
+  # 1. Meilisearch (Private Service - internal only, enables DNS resolution)
+  - type: pserv
     name: fly-meilisearch
     runtime: docker
     plan: free
@@ -23,14 +23,11 @@ services:
     startCommand: npm start
     envVars:
       - key: MEILI_HOST
-        fromService:
-          name: fly-meilisearch
-          type: web
-          property: host
+        value: http://fly-meilisearch:7700
       - key: MEILI_MASTER_KEY
         fromService:
           name: fly-meilisearch
-          type: web
+          type: pserv
           envVarKey: MEILI_MASTER_KEY
 
   # 3. Frontend (React/Vite)

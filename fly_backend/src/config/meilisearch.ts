@@ -3,20 +3,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// MEILI_HOST must be a full URL like http://fly-meilisearch:7700
 const meiliHost = process.env.MEILI_HOST || 'http://localhost:7700';
 
-let finalHost = meiliHost;
-// If user provided just 'fly-meilisearch' or it doesn't have a protocol
-if (!finalHost.startsWith('http')) {
-  finalHost = `http://${finalHost}`;
-}
-
-// Ensure port if it's an internal host
-if (!finalHost.includes(':') && finalHost.includes('fly-meilisearch') && !finalHost.includes('.onrender.com')) {
-  finalHost = `${finalHost}:7700`;
-}
+console.log(`Meilisearch connecting to: ${meiliHost}`);
 
 export const searchClient = new Meilisearch({
-  host: finalHost,
+  host: meiliHost,
   apiKey: process.env.MEILI_MASTER_KEY || 'masterKey',
 });
