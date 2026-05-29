@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import searchRouter from './routes/search.js';
-import { searchClient } from './config/meilisearch.js';
+import { searchClient, meiliHost } from './config/meilisearch.js';
 import { seed } from '../scripts/seed.js';
 
 dotenv.config();
@@ -50,11 +50,13 @@ app.get('/api/debug', async (req, res) => {
       isSeeding 
     });
   } catch (error: any) {
+    console.error('DEBUG API ERROR:', error.message);
     res.status(500).json({ 
       status: 'error', 
       message: error.message,
-      code: error.code,
-      host: process.env.MEILI_HOST || 'not set'
+      suggestion: 'Check if MEILI_HOST matches Render Dashboard exactly',
+      current_target: meiliHost,
+      host_env: process.env.MEILI_HOST || 'not set'
     });
   }
 });
