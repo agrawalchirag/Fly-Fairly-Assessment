@@ -197,12 +197,21 @@ export async function seed() {
       searchableAttributes: ['name', 'aliases', 'search_text']
     });
 
-    console.log('Sending documents to Meilisearch...');
-    await Promise.all([
-      airportsIndex.addDocuments(processedAirports),
-      citiesIndex.addDocuments(processedCities),
-      regionsIndex.addDocuments(processedRegions)
-    ]);
+    console.log('Sending documents to Meilisearch in batches...');
+
+    const BATCH_SIZE = 500;
+
+    const sendInBatches = async (index: any, documents: any[]) => {
+      for (let i = 0; i < documents.length; i += BATCH_SIZE) {
+        const batch = documents.slice(i, i + BATCH_SIZE);
+        console.log(`Sending batch to ${index.uid}: ${i} to ${i + batch.length}...`);
+        await index.addDocuments(batch);
+      }
+    };
+
+    await sendInBatches(airportsIndex, processedAirports);
+    await sendInBatches(citiesIndex, processedCities);
+    await sendInBatches(regionsIndex, processedRegions);
 
     console.log('Seed complete!');
   } catch (error) {
