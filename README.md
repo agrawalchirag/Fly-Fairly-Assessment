@@ -67,3 +67,6 @@ Open `http://localhost:5173` in your browser.
 - `fly_backend/scripts/`: Data download and seeding logic.
 - `fly_frontend/`: React components and UI.
 - `meilisearch.exe`: Local search engine binary.
+
+##  Live URL 
+  `http://51.20.248.31/`
