@@ -20,11 +20,16 @@ Use this if you have **Docker Desktop** installed and running.
    Open a new terminal and run:
    ```bash
    cd fly_backend
+   npm install
    npx tsx scripts/seed.ts
    ```
-4. **Access the App:**
-   - **Frontend:** http://localhost:5173
-   - **Backend:** http://localhost:3001
+
+4. **Start the Backend**
+Open a **new terminal**:
+```bash
+cd fly_backend
+npm run dev
+```
 
 ---
 
@@ -32,7 +37,7 @@ Use this if you have **Docker Desktop** installed and running.
 Use this if you don't have Docker installed.
 
 #### 1. Download & Start Meilisearch
-- Download `meilisearch-windows-amd64.exe` from the [Meilisearch GitHub Releases](https://github.com/meilisearch/meilisearch/releases).
+- Download for windows `meilisearch-windows-amd64.exe` from the [Meilisearch GitHub Releases](https://github.com/meilisearch/meilisearch/releases).
 - Rename it to `meilisearch.exe` and place it in the root folder (`\FLY`).
 - Run this command in your terminal:
   ```bash
